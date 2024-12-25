@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+        postgres:
+            image: postgres:latest
+            container_name: db-pg
+            environment:
+                POSTGRES_DB: db
+                POSTGRES_USER: usr
+                POSTGRES_PASSWORD: root
+            ports:
+                - "5432:5432"
+            volumes:
+                - postgres_data:/var/lib/postgresql/data
+            restart: always
+        web:
+            image: app-name:latest
+            build:
+                target: web
+                context: .
+            env_file:
+                - .env
+            ports:
+                - "8000:80"
+            volumes:
+                - .:/var/www/html
+            depends_on:
+                - postgres
+#            entrypoint: ["./wait-for-it.sh", "db", "--", "php-fpm"]
+volumes:
+    postgres_data:
